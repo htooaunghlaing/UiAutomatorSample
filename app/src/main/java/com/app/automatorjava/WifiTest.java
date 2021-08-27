@@ -3,6 +3,7 @@ package com.app.automatorjava;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -12,14 +13,14 @@ import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.Direction;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
-import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
 
 import static androidx.test.uiautomator.Until.findObject;
 import static java.lang.Thread.sleep;
@@ -27,14 +28,12 @@ import static java.lang.Thread.sleep;
 @RunWith(AndroidJUnit4.class)
 public class WifiTest {
 
-    private static final Object DEFAULT_TIMEOUT = 2500;
     private UiDevice mDevice;
 
     @Before
-    public void setup() throws UiObjectNotFoundException {
+    public void setup(){
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         mDevice.pressHome();
-
     }
 
     @Test
@@ -54,19 +53,19 @@ public class WifiTest {
         settingApp.click();
 
         // Wait up to 2 seconds for the element be displayed on screen
-        UiObject2 networkAndInternet = mDevice.wait(findObject(By.text("Network & internet")), 3000);
+        UiObject2 networkAndInternet = mDevice.wait(Until.findObject(By.text("Network & internet")), 3000);
         networkAndInternet.click();
 
         // Click on element with text "Wi‑Fi"
-        UiObject2 wifi = mDevice.wait(findObject(By.text("Wi‑Fi")), 2500);
+        UiObject2 wifi = mDevice.wait(Until.findObject(By.text("Wi‑Fi")), 2500);
         wifi.click();
 
         // Click on element with text "Add network"
-        UiObject2 addNetwork = mDevice.wait(findObject(By.text("Add network")), 2500);
+        UiObject2 addNetwork = mDevice.wait(Until.findObject(By.text("Add network")), 2500);
         addNetwork.click();
 
         // Obtain an instance of UiObject2 of the text field
-        UiObject2 ssidField = mDevice.wait(findObject(By.res("com.android.settings:id/ssid")), 2500);
+        UiObject2 ssidField = mDevice.wait(Until.findObject(By.res("com.android.settings:id/ssid")), 2500);
         // Call the setText method using  Kotlin's property access syntax
         String ssid = "AndroidWifi";
         ssidField.setText(ssid);
@@ -97,11 +96,11 @@ public class WifiTest {
         // Perform the validation using hasObject
         // Wait up to 5 seconds to find the element we're looking for
         Boolean isConnected = mDevice.wait(Until.hasObject(networkEntrySelector), 5000);
-        Assert.assertTrue("Verify if device is connected to added Wi-Fi", isConnected);
 
-//        // Perform the validation using Android APIs
-//        String connectedWifi = getCurrentWifiSsid();
-//        Assert.assertEquals("Verify if is connected to the Wifi", ssid, connectedWifi);
+        boolean screenshot = mDevice.takeScreenshot(new File("/sdcard/Download/screen.jpg"));
+
+
+        Assert.assertTrue("Verify if device is connected to added Wi-Fi", isConnected);
 
     }
 
